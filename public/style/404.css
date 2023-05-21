@@ -1,0 +1,18 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    background-color: azure;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.text h2{
+    font-size: 30px;
+}
