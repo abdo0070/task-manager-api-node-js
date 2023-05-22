@@ -1,26 +1,15 @@
-// get tasks
-// add task
-// delete task
-// update task
-class Task{
-    constructor(){
-        
-    }
-    static add(data) {
-       name = data.name;  
-    }
-    static remove(id){
+const mongoose = require('mongoose');
 
+const TaskSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        required:[true,"must provide name"],
+        trim:true,
+        maxlength:[20,"name connot be more than 20 characters "],
+    },
+    completed:{
+        type:Boolean,
+        required:true,
     }
-    static update(id,data){
-
-    }
-    static all(){
-
-    }
-    static get(){
-
-    }
-}
-
-module.exports = {Task}
+});
+module.exports = mongoose.model('Task',TaskSchema);

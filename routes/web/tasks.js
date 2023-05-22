@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { index, create, edit, store } = require("../../controllers/tasks");
+const { index, create, edit, store, remove } = require("../../controllers/tasks");
 
 router.get('/',index);
+router.post('/',store);
+router.delete('/',remove);
+/*****/
 router.route("/create").get(create);
 router.post('/edit',edit);
-router.post('/store',store);
+
 
 module.exports = router;

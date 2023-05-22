@@ -7,11 +7,15 @@ const tasks = require('./routes/web/tasks');
 const PORT = 5000;
 const {connectDB} = require('./db/connect');
 require('dotenv').config()
+const bodyParser = require('body-parser');
+
 
 app.use(express.static('./public'));
 
 // middleware
 app.use(express.json())
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
 
 const router1 = express.Router();
 
@@ -20,6 +24,8 @@ router1.use('*',(req, res, next) => {
   console.log('Time:', Date.now());
   next();
 })
+
+
 // routes
  app.use('/tasks',[router1,tasks]);
  // start the application 
