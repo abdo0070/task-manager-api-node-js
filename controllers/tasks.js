@@ -1,46 +1,60 @@
+const asyncWrapper = require("../middleware/AsyncWrapper");
 const Task = require("../model/Task");
 const { htmlPage } = require("../service/htmlPage");
 
-const index = (req, res) => {
-  res.sendFile(htmlPage("tasks.index"));
-};
 
-const create = (req, res) => {
+const create = asyncWrapper((req, res) => {
   res.sendFile(htmlPage("tasks.create"));
-};
-const edit = (req, res) => {
-  res.sendFile(htmlPage("tasks.edit"));
-};
-const store = async (req, res) => {
-  try {
-    const task = await Task.create(req.body);
-    res.status(201).json({ task });
-  } catch (error) {
-    // return the user to the create page and send the errors with the it .
-    res.status(500).json({msg:error});
-  }
-};
-const remove = async (req, res) => {
-  const { id } = req.body;
-  try{
-    const task = await Task.deleteOne({ _id: id });
-    res.status(203).json({task});
-    
-  }catch(err){
-    console.log(err)
-    res.status(404).json(err);
-  }
-};
+});
 
-const patch = (req, res) => {
-  res.send("patch");
-};
+const store = asyncWrapper((req, res) => {
+  const task = Task.create(req.body);
+  res.status(201).json({ task });
+});
+
+const remove = asyncWrapper((req, res) => {
+  const { id } = req.body;
+  const task = Task.deleteOne({ _id: id });
+  res.status(202).json({ task });
+});
+
+const all = asyncWrapper((req, res) => {
+  const tasks = Task.find({});
+  res
+    .status(201)
+    .json({ success: true, data: { tasks, amount: tasks.length } });
+});
+
+const getTask = asyncWrapper((req, res) => {
+  const { id } = req.params;
+  const task = Task.findOne({ _id: id });
+  if (!task) {
+    res.status(404).json({ msg: "no user with that id" });
+    return;
+  }
+  res.status(201).json({ task });
+});
+
+const put = asyncWrapper((req, res) => {
+  const { id } = req.params;
+  // find the task and send the new data to the update function .
+  // new : option is to return the updated task .
+  // runValidators : option is to run the valodatiors that in the schema model .
+  const task = Task.findByIdAndUpdate({ _id: id }, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!task) {
+    return res.status(404).json({ msg: "not found" });
+  }
+  res.status(201).json({ data: task });
+});
 
 module.exports = {
-  index,
   store,
   remove,
-  edit,
-  patch,
+  put,
   create,
+  all,
+  singleTask: getTask,
 };

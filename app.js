@@ -1,9 +1,6 @@
 const express = require("express");
-const { htmlPage } = require('./service/htmlPage');
-const { connect } = require('./db/connect');
-const { Task } = require("./model/Task");
 const app = express();
-const tasks = require('./routes/web/tasks');
+const tasks = require('./routes/api/Task')
 const PORT = 5000;
 const {connectDB} = require('./db/connect');
 require('dotenv').config()
