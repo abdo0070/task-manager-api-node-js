@@ -1,33 +1,28 @@
 const asyncWrapper = require("../middleware/AsyncWrapper");
 const Task = require("../model/Task");
-const { htmlPage } = require("../service/htmlPage");
 
-
-const create = asyncWrapper((req, res) => {
-  res.sendFile(htmlPage("tasks.create"));
-});
-
-const store = asyncWrapper((req, res) => {
-  const task = Task.create(req.body);
+const store = asyncWrapper(async (req, res) => {
+  const task = await Task.create(req.body);
   res.status(201).json({ task });
 });
 
-const remove = asyncWrapper((req, res) => {
-  const { id } = req.body;
-  const task = Task.deleteOne({ _id: id });
+const remove = asyncWrapper(async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  const task = await Task.deleteOne({_id : id });
   res.status(202).json({ task });
 });
 
-const all = asyncWrapper((req, res) => {
-  const tasks = Task.find({});
+const all = asyncWrapper(async (req, res) => {
+  const tasks = await Task.find({});
   res
     .status(201)
     .json({ success: true, data: { tasks, amount: tasks.length } });
 });
 
-const getTask = asyncWrapper((req, res) => {
+const getTask = asyncWrapper(async (req, res) => {
   const { id } = req.params;
-  const task = Task.findOne({ _id: id });
+  const task = await Task.findOne({ _id: id });
   if (!task) {
     res.status(404).json({ msg: "no user with that id" });
     return;
@@ -35,12 +30,12 @@ const getTask = asyncWrapper((req, res) => {
   res.status(201).json({ task });
 });
 
-const put = asyncWrapper((req, res) => {
+const put = asyncWrapper(async (req, res) => {
   const { id } = req.params;
   // find the task and send the new data to the update function .
   // new : option is to return the updated task .
   // runValidators : option is to run the valodatiors that in the schema model .
-  const task = Task.findByIdAndUpdate({ _id: id }, req.body, {
+  const task = await Task.findByIdAndUpdate({ _id: id }, req.body , {
     new: true,
     runValidators: true,
   });
@@ -54,7 +49,6 @@ module.exports = {
   store,
   remove,
   put,
-  create,
   all,
   singleTask: getTask,
 };

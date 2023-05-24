@@ -1,9 +1,11 @@
+const errorHandlerMiddleware = require("./errorHandler");
+
 const asyncWrapper = (cb) => {
   return async (req, res, next) => {
     try {
-      await cb(req, res, next);
+      await cb(req, res , next);
     } catch (error) {
-      next(error);
+      errorHandlerMiddleware(error,res,req,next);
     }
   };
 };
